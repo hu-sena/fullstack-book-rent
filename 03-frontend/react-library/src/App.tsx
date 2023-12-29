@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import { Navbar } from './layouts/NavbarAndFooter/Navbar';
+import { Navbar } from './Layouts/NavbarAndFooter/Navbar';
 
 function App() {
   return (
