@@ -1,7 +1,8 @@
-import { Carousel } from "./Components/Carousel"
-import { ExploreTopBooks } from "./Components/ExploreTopBooks"
-import { Heros } from "./Components/Heros"
-import { LibraryServices } from "./Components/LibraryServices"
+import { Carousel } from "./Carousel"
+import { ExploreTopBooks } from "./ExploreTopBooks"
+import { Heros } from "./Heros"
+import { LibraryServices } from "./LibraryServices"
+
 
 export const HomePage = () => {
     return (
@@ -10,7 +11,7 @@ export const HomePage = () => {
             <Carousel />
             <Heros />
             <LibraryServices />
-            
+
         </>
     )
 }
