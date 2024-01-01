@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import BookModel from "../../Models/BookModels";
 import { SpinnerLoading } from "../Utils/SpinnerLoading";
+import { SearchBook } from "./Components/SearchBook";
 
 export const SearchBooksPage = () => {
 
