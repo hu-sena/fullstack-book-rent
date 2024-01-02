@@ -10,7 +10,7 @@ public interface BookRepository extends JpaRepository <Book, Long> {
 
 //    Page: hold paginated data, Pageable: specify pagination options
     Page<Book> findByTitleContaining(@RequestParam("title") String title, Pageable paginateOptions);
-    Page<Book> findByCategory(@RequestParam("category") String title, Pageable paginateOptions);
+    Page<Book> findByCategory(@RequestParam("category") String category, Pageable paginateOptions);
 
 //      provided by Spring Data JPA -- detect from naming convention to query database
 //        "search": {
