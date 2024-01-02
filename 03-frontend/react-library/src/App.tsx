@@ -8,9 +8,10 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 
 export const App = () => {
   return (
-    <div>
+    <div className='d-flex flex-column min-vh-100'>
       <Navbar />
-      <Switch>
+      <div className='flex-grow-1'>
+        <Switch>
         <Route path='/' exact>
           <Redirect to='/home' />
         </Route>
@@ -21,6 +22,7 @@ export const App = () => {
           <SearchBooksPage />
         </Route>
       </Switch>
+      </div>
       <Footer />
     </div>
 
