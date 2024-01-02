@@ -5,6 +5,7 @@ export const Pagination: React.FC<{currentPage: number,
        const pageNumbers = [];
 
        if (props.currentPage === 1 ) {
+        // show pages: 1, 2, 3
            pageNumbers.push(props.currentPage);
            if (props.totalPages >= props.currentPage + 1) {
                pageNumbers.push(props.currentPage + 1);
@@ -13,6 +14,7 @@ export const Pagination: React.FC<{currentPage: number,
                pageNumbers.push(props.currentPage + 2);
            }
        } else if (props.currentPage > 1) {
+        // show 2 previous pages
            if (props.currentPage >= 3 ) {
                pageNumbers.push(props.currentPage - 2);
                pageNumbers.push(props.currentPage - 1);
