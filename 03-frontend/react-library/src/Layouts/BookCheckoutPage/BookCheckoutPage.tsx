@@ -5,6 +5,7 @@ import { SpinnerLoading } from "../Utils/SpinnerLoading";
 import { StarsReview } from "../Utils/StarsReview";
 import { CheckoutAndReviewBox } from "./CheckoutAndReviewBox";
 import ReviewModel from "../../Models/ReviewModels";
+import { LatestReviews } from "./LatestReviews";
 
 export const BookCheckoutPage = () => {
 
@@ -83,7 +84,7 @@ export const BookCheckoutPage = () => {
                     book_id: responseDataReviews[key].bookId,
                     reviewDescription: responseDataReviews[key].reviewDescription,
                 });
-                
+
                 // total accumulation from all ratings
                 weightedStarReviews = weightedStarReviews + responseDataReviews[key].rating;
             }
@@ -139,12 +140,13 @@ export const BookCheckoutPage = () => {
                             <h2>{book?.title}</h2>
                             <h5 className='text-primary'>{book?.author}</h5>
                             <p className='lead'>{book?.description}</p>
-                            <StarsReview rating={4} size={32} />
+                            <StarsReview rating={totalStars} size={32} />
                         </div>
                     </div>
                     <CheckoutAndReviewBox book={book} mobile={false} />
                 </div>
                 <hr />
+                <LatestReviews reviews={reviews} bookId={book?.id} mobile={false} />
             </div>
 
             {/* Mobile */}
@@ -161,11 +163,12 @@ export const BookCheckoutPage = () => {
                         <h2>{book?.title}</h2>
                         <h5 className='text-primary'>{book?.author}</h5>
                         <p className='lead'>{book?.description}</p>
-                        <StarsReview rating={4} size={32} />
+                        <StarsReview rating={totalStars} size={32} />
                     </div>
                 </div>
                 <CheckoutAndReviewBox book={book} mobile={true} />
                 <hr />
+                <LatestReviews reviews={reviews} bookId={book?.id} mobile={true} />
             </div>
         </div>
     )
