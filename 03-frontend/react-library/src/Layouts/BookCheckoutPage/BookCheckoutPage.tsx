@@ -83,11 +83,12 @@ export const BookCheckoutPage = () => {
                     book_id: responseDataReviews[key].bookId,
                     reviewDescription: responseDataReviews[key].reviewDescription,
                 });
-
+                
+                // total accumulation from all ratings
                 weightedStarReviews = weightedStarReviews + responseDataReviews[key].rating;
             }
 
-            // calculate how many stars given to a book based on reviews
+            // calculate average stars given to a book based on reviews
             if (loadedReviews) {
                 const round = (Math.round((weightedStarReviews / loadedReviews.length) * 2) / 2).toFixed(1);
                 setTotalStars(Number(round));
