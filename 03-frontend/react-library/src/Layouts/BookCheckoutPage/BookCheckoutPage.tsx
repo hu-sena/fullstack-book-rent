@@ -4,50 +4,108 @@ import { useParams } from "react-router-dom";
 import { SpinnerLoading } from "../Utils/SpinnerLoading";
 import { StarsReview } from "../Utils/StarsReview";
 import { CheckoutAndReviewBox } from "./CheckoutAndReviewBox";
+import ReviewModel from "../../Models/ReviewModels";
 
 export const BookCheckoutPage = () => {
 
+    // Book State
+
     const [book, setBook] = useState<BookModel>();
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingBook, setIsLoadingBook] = useState(true);
     const [httpError, setHttpError] = useState(null);
 
-    const { bookId } = useParams<{ bookId: string }>();
-    // const bookId = (window.location.pathname).split('/')[2];
+    // Review State
 
+    const [reviews, setReviews] = useState<ReviewModel[]>([]);
+    const [totalStars, setTotalStars] = useState(0);
+    const [isLoadingReview, setIsLoadingReview] = useState(true);
+
+    const { bookId } = useParams<{ bookId: string }>();
+
+    // Book useEffect
     useEffect(() => {
         const fetchBook = async () => {
-            const baseUrl: string = `http://localhost:8080/api/books/${bookId}`;
+            const bookUrl: string = `http://localhost:8080/api/books/${bookId}`;
 
-            const response = await fetch(baseUrl);
+            const responseBook = await fetch(bookUrl);
 
-            if (!response.ok) {
+            if (!responseBook.ok) {
                 throw new Error('Something went wrong!');
             }
 
-            const responseJson = await response.json();
+            const responseJsonBook = await responseBook.json();
 
             const loadedBook: BookModel = {
-                id: responseJson.id,
-                title: responseJson.title,
-                author: responseJson.author,
-                description: responseJson.description,
-                copies: responseJson.copies,
-                copiesAvailable: responseJson.copiesAvailable,
-                category: responseJson.category,
-                img: responseJson.img
+                id: responseJsonBook.id,
+                title: responseJsonBook.title,
+                author: responseJsonBook.author,
+                description: responseJsonBook.description,
+                copies: responseJsonBook.copies,
+                copiesAvailable: responseJsonBook.copiesAvailable,
+                category: responseJsonBook.category,
+                img: responseJsonBook.img
             };
 
-
             setBook(loadedBook);
-            setIsLoading(false);
+            setIsLoadingBook(false);
         };
         fetchBook().catch((error: any) => {
-            setIsLoading(false);
+            setIsLoadingBook(false);
             setHttpError(error.message);
         })
     }, []);
 
-    if (isLoading) {
+    // Review useEffect
+
+    useEffect(() => {
+        const fetchBookReviews = async () => {
+            const reviewUrl: string = `http://localhost:8080/api/reviews/search/findByBookId?bookId=${bookId}`;
+
+            const responseReviews = await fetch(reviewUrl);
+
+            if (!responseReviews.ok) {
+                throw new Error('Something went wrong!');
+            }
+
+            const responseJsonReviews = await responseReviews.json();
+            const responseDataReviews = responseJsonReviews._embedded.reviews;
+
+            const loadedReviews: ReviewModel[] = [];
+
+            let weightedStarReviews: number = 0;
+
+            for (const key in responseDataReviews) {
+                loadedReviews.push({
+                    id: responseDataReviews[key].id,
+                    userEmail: responseDataReviews[key].userEmail,
+                    date: responseDataReviews[key].date,
+                    rating: responseDataReviews[key].rating,
+                    book_id: responseDataReviews[key].bookId,
+                    reviewDescription: responseDataReviews[key].reviewDescription,
+                });
+
+                weightedStarReviews = weightedStarReviews + responseDataReviews[key].rating;
+            }
+
+            // calculate how many stars given to a book based on reviews
+            if (loadedReviews) {
+                const round = (Math.round((weightedStarReviews / loadedReviews.length) * 2) / 2).toFixed(1);
+                setTotalStars(Number(round));
+            }
+
+            setReviews(loadedReviews);
+            setIsLoadingReview(false);
+
+        };
+
+        fetchBookReviews().catch((error: any) => {
+            setIsLoadingReview(false);
+            setHttpError(error.message);
+        })
+
+    }, []);
+
+    if (isLoadingBook || isLoadingReview) {
         return (
             <SpinnerLoading />
         )
