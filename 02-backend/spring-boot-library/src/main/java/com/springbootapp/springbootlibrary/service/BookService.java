@@ -49,4 +49,14 @@ public class BookService {
 
         return book.get();
     }
+
+    public Boolean checkoutBookByUser(String userEmail, Long bookId) {
+        Checkout vaildateCheckout = checkoutRepository.findByUserEmailAndBookId(userEmail, bookId);
+
+        if (vaildateCheckout != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
