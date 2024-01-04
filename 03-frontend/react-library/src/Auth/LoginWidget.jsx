@@ -1,4 +1,4 @@
-import { Redirect } from 'react-react-dom';
+import { Redirect } from 'react-router-dom';
 import { useOktaAuth } from '@okta/okta-react';
 import { SpinnerLoading } from '../Layouts/Utils/SpinnerLoading';
 import OktaSignInWidget from './OktaSignInWidget';
