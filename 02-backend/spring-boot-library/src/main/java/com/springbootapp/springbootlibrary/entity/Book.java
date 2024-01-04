@@ -1,6 +1,9 @@
 package com.springbootapp.springbootlibrary.entity;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 
 @Entity
@@ -8,6 +11,7 @@ import javax.persistence.*;
 @Data
 public class Book {
 
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -25,6 +29,8 @@ public class Book {
     @Column(name = "copies")
     private int copies;
 
+    @Setter
+    @Getter
     @Column(name = "copies_available")
     private int copiesAvailable;
 
@@ -33,4 +39,5 @@ public class Book {
 
     @Column(name = "img")
     private String img;
+
 }
