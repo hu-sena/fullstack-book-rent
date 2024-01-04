@@ -23,6 +23,12 @@ public class BookController {
         return bookService.checkoutBookByUser(userEmail, bookId);
     }
 
+    @GetMapping("/secure/currentloans/count")
+    public int currentLoansCount() {
+        String userEmail = "testuser@email.com";
+        return bookService.currentLoansCount(userEmail);
+    }
+
 
 //    update on checkout based on bookId - then send userEmail
     @PutMapping("/secure/checkout")
