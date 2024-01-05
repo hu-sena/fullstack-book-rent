@@ -22,7 +22,8 @@ public class SecurityConfiguration {
 //        protect endpoints at /api/<type>/secure
         http.authorizeRequests(configurer ->
                 configurer
-                        .antMatchers("/api/books/secure/**")
+                        .antMatchers("/api/books/secure/**",
+                                "/api/reviews/secure/**")
                         .authenticated().anyRequest().permitAll())
                 .oauth2ResourceServer(oauth2ResourceServer ->
                         oauth2ResourceServer.jwt(Customizer.withDefaults()));
