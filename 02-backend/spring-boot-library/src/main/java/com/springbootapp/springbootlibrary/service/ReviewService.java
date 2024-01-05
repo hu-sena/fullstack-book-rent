@@ -15,12 +15,10 @@ import java.time.LocalDate;
 @Transactional
 public class ReviewService {
 
-    private BookRepository bookRepository;
     private ReviewRepository reviewRepository;
 
     @Autowired
     public ReviewService(BookRepository bookRepository, ReviewRepository reviewRepository) {
-        this.bookRepository = bookRepository;
         this.reviewRepository = reviewRepository;
     }
 
@@ -48,4 +46,18 @@ public class ReviewService {
         reviewRepository.save(review);
 
     }
+
+//    used for frontend
+    public Boolean userReviewListed(String userEmail, Long bookId) {
+
+        Review validateReview = reviewRepository.findByUserEmailAndBookId(userEmail, bookId);
+
+        if (validateReview != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
 }
