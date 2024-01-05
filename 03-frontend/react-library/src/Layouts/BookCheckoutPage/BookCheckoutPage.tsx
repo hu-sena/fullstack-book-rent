@@ -26,6 +26,10 @@ export const BookCheckoutPage = () => {
     const [currentLoansCount, setCurrentLoansCount] = useState(0);
     const [isLoadingCurrentLoansCount, setIsLoadingCurrentLoansCount] = useState(true);
 
+    // Book Checked Out?
+    const [isBookCheckedOut, setIsBookCheckedOut] = useState(0);
+    const [isLoadingBookCheckedOut, setIsLoadingBookCheckedOut] = useState(true);
+
     const { bookId } = useParams<{ bookId: string }>();
 
     // Book useEffect
@@ -147,7 +151,41 @@ export const BookCheckoutPage = () => {
         // dependency array - the useEffect runs whenever the authState changes
     }, [authState])
 
-    if (isLoadingBook || isLoadingReview || isLoadingCurrentLoansCount) {
+    // Book Checked Out? useEffect
+    useEffect(() => {
+        const fetchUserCheckedOutBook = async () => {
+            if (authState && authState.isAuthenticated) {
+                const isBookCheckedOutUrl = `http://localhost:8080/api/books/secure/ischeckedout/user/?bookId=${bookId}`;
+
+                const requestOptions = {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${authState.accessToken?.accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                };
+
+                const responseIsBookCheckedOut = await fetch(isBookCheckedOutUrl, requestOptions);
+
+                if (!responseIsBookCheckedOut.ok) {
+                    throw new Error('Something went wrong!');
+                }
+
+                const responseJsonIsBookCheckedOut = await responseIsBookCheckedOut.json();
+                setIsBookCheckedOut(responseJsonIsBookCheckedOut);
+
+            }
+            setIsLoadingBookCheckedOut(false);
+
+        };
+
+        fetchUserCheckedOutBook().catch((error: any) => {
+            setIsLoadingBookCheckedOut(false);
+            setHttpError(error.message);
+        })
+    }, [authState])
+
+    if (isLoadingBook || isLoadingReview || isLoadingCurrentLoansCount || isLoadingBookCheckedOut) {
         return (
             <SpinnerLoading />
         )
