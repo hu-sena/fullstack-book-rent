@@ -46,18 +46,17 @@ export const ReviewListPage = () => {
                     book_id: responseDataReviews[key].bookId,
                     reviewDescription: responseDataReviews[key].reviewDescription,
                 });
+            }
+            setReviews(loadedReviews);
+            setIsLoadingReviews(false);
 
-                setReviews(loadedReviews);
-                setIsLoadingReviews(false);
+        };
 
-            };
+        fetchBookReviews().catch((error: any) => {
+            setIsLoadingReviews(false);
+            setHttpError(error.message);
+        })
 
-            fetchBookReviews().catch((error: any) => {
-                setIsLoadingReviews(false);
-                setHttpError(error.message);
-            })
-
-        }
     }, [currentPage]);
 
     if (isLoadingReviews) {
