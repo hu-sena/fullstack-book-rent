@@ -31,23 +31,27 @@ export const Navbar = () => {
                         <li className='nav-item'>
                             <NavLink className='nav-link' to='/search'>Search Books</NavLink>
                         </li>
+                        {authState.isAuthenticated &&
+                            <li className='nav-item'>
+                                <NavLink className='nav-link' to='/shelf'>Shelf</NavLink>
+                            </li>}
                     </ul>
 
                     <ul className='navbar-nav ms-auto'>
                         {!authState.isAuthenticated ?
-                        <li className='nav-item m-1'>
-                            <Link className='btn btn-outline-light' type='button' to='/login'>
-                                Sign in
-                            </Link>
-                        </li>
-                        :
-                        <li className='nav-item m-1'>
-                            <a className='btn btn-outline-light' type='button' onClick={handleLogout}>
-                                Logout
-                            </a>
-                        </li>
+                            <li className='nav-item m-1'>
+                                <Link className='btn btn-outline-light' type='button' to='/login'>
+                                    Sign in
+                                </Link>
+                            </li>
+                            :
+                            <li className='nav-item m-1'>
+                                <a className='btn btn-outline-light' type='button' onClick={handleLogout}>
+                                    Logout
+                                </a>
+                            </li>
                         }
-                        
+
                     </ul>
                 </div>
             </div>
