@@ -4,11 +4,17 @@ import com.springbootapp.springbootlibrary.dao.BookRepository;
 import com.springbootapp.springbootlibrary.dao.CheckoutRepository;
 import com.springbootapp.springbootlibrary.entity.Book;
 import com.springbootapp.springbootlibrary.entity.Checkout;
+import com.springbootapp.springbootlibrary.responsemodels.ShelfCurrentLoansResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Transactional
@@ -62,5 +68,48 @@ public class BookService {
 
     public int currentLoansCount(String userEmail) {
         return checkoutRepository.findBooksByUserEmail(userEmail).size();
+    }
+
+    public List<ShelfCurrentLoansResponse> currentLoans(String userEmail) throws Exception {
+
+        List<ShelfCurrentLoansResponse> shelfCurrentLoansResponses = new ArrayList<>();
+
+//        find books checked out by user into a list
+        List<Checkout> checkoutList = checkoutRepository.findBooksByUserEmail(userEmail);
+
+//        retrieve book IDs into a list from checkoutList
+        List<Long> bookIdList = new ArrayList<>();
+        for (Checkout i : checkoutList) {
+            bookIdList.add(i.getBookId());
+        }
+
+//        retrieve the books information based on book IDs
+        List<Book> books = bookRepository.findBooksByBookIds(bookIdList);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        for (Book book : books) {
+//            stream(): method to perform operations on elements in the list
+            Optional<Checkout> checkout = checkoutList.stream()
+//                    filter the elements of Checkout object that match book IDs in Book object
+//                    - to retrieve information of checked out books from Book list
+                    .filter(x -> x.getBookId() == book.getId()).findFirst();
+
+            if (checkout.isPresent()) {
+//                  get(): method to access the elements
+                Date returnDate = dateFormat.parse(checkout.get().getReturnDate());
+                Date currentDate = dateFormat.parse(LocalDate.now().toString());
+
+                TimeUnit time = TimeUnit.DAYS;
+
+                long differenceInTime = time.convert(returnDate.getTime() - currentDate.getTime(),
+                                                    TimeUnit.MILLISECONDS);
+
+                shelfCurrentLoansResponses.add(new ShelfCurrentLoansResponse(book, (int) differenceInTime));
+
+            }
+        }
+
+        return shelfCurrentLoansResponses;
     }
 }
