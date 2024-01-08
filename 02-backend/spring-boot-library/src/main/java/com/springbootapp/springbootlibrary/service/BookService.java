@@ -2,8 +2,10 @@ package com.springbootapp.springbootlibrary.service;
 
 import com.springbootapp.springbootlibrary.dao.BookRepository;
 import com.springbootapp.springbootlibrary.dao.CheckoutRepository;
+import com.springbootapp.springbootlibrary.dao.HistoryRepository;
 import com.springbootapp.springbootlibrary.entity.Book;
 import com.springbootapp.springbootlibrary.entity.Checkout;
+import com.springbootapp.springbootlibrary.entity.History;
 import com.springbootapp.springbootlibrary.responsemodels.ShelfCurrentLoansResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,11 +24,14 @@ public class BookService {
 
     private BookRepository bookRepository;
     private CheckoutRepository checkoutRepository;
+    private HistoryRepository historyRepository;
 
 //    dependency injection
-    public BookService(BookRepository bookRepository, CheckoutRepository checkoutRepository) {
+    public BookService(BookRepository bookRepository, CheckoutRepository checkoutRepository,
+                       HistoryRepository historyRepository) {
         this.bookRepository = bookRepository;
         this.checkoutRepository = checkoutRepository;
+        this.historyRepository = historyRepository;
     }
 
     public Book checkoutBook(String userEmail, Long bookId) throws Exception {
@@ -128,9 +133,22 @@ public class BookService {
         bookRepository.save(book.get());
         checkoutRepository.deleteById(vaildateCheckout.getId());
 
+        History history = new History(
+                userEmail,
+                vaildateCheckout.getCheckoutDate(),
+//                returned date
+                LocalDate.now().toString(),
+                book.get().getTitle(),
+                book.get().getAuthor(),
+                book.get().getDescription(),
+                book.get().getImg()
+
+        );
+
+        historyRepository.save(history);
     }
 
-    public void renewLoan(String userEmail, Long bookId) throws Exception {
+    public void renewLoan (String userEmail, Long bookId) throws Exception {
 
         Checkout vaildateCheckout = checkoutRepository.findByUserEmailAndBookId(userEmail, bookId);
         if(vaildateCheckout == null) {
