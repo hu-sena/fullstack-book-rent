@@ -12,6 +12,7 @@ export const Loans = () => {
     // Current Loans
     const [shelfCurrentLoans, setShelfCurrentLoans] = useState<ShelfCurrentLoans[]>([]);
     const [isLoadingUserLoans, setIsLoadingUserLoans] = useState(true);
+    const [checkout, setCheckout] = useState(false);
 
     useEffect(() => {
         const fetchUserCurrentLoans = async () => {
@@ -46,7 +47,7 @@ export const Loans = () => {
         })
 
         window.scrollTo(0, 0);
-    }, [authState])
+    }, [authState, checkout])
 
     if (isLoadingUserLoans) {
         return (
@@ -60,6 +61,25 @@ export const Loans = () => {
                 <p>{httpError}</p>
             </div>
         );
+    }
+
+    async function returnBook(bookId: number) {
+        const returnBookUrl = `http://localhost:8080/api/books/secure/return/?bookId=${bookId}`;
+
+        const requestOptions = {
+            method: 'PUT',
+            headers: {
+                Authorization: `Bearer ${authState?.accessToken?.accessToken}`,
+                'Content-Type': 'application/json'
+            }
+        };
+        const responseReturnBook = await fetch(returnBookUrl, requestOptions);
+
+        if (!responseReturnBook.ok) {
+            throw new Error('Something went wrong!');
+        }
+        // to trigger useEffect if it's checked out or not
+        setCheckout(!checkout);
     }
 
     return (
@@ -124,7 +144,7 @@ export const Loans = () => {
                                 </div>
 
                                 <hr />
-                                <LoansModal shelfCurrentLoan={shelfCurrentLoan} mobile={false} />
+                                <LoansModal shelfCurrentLoan={shelfCurrentLoan} mobile={false} returnBook={returnBook} />
                             </div>
                         ))};
 
@@ -199,7 +219,7 @@ export const Loans = () => {
                                 </div>
 
                                 <hr />
-                                <LoansModal shelfCurrentLoan={shelfCurrentLoan} mobile={true} />
+                                <LoansModal shelfCurrentLoan={shelfCurrentLoan} mobile={true} returnBook={returnBook} />
 
                             </div>
                         ))};
