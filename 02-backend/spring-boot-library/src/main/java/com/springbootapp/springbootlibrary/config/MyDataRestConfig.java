@@ -2,6 +2,8 @@ package com.springbootapp.springbootlibrary.config;
 
 
 import com.springbootapp.springbootlibrary.entity.Book;
+import com.springbootapp.springbootlibrary.entity.History;
+import com.springbootapp.springbootlibrary.entity.Message;
 import com.springbootapp.springbootlibrary.entity.Review;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
@@ -26,9 +28,13 @@ public class MyDataRestConfig implements RepositoryRestConfigurer {
 
         config.exposeIdsFor(Book.class);
         config.exposeIdsFor(Review.class);
+        config.exposeIdsFor(History.class);
+        config.exposeIdsFor(Message.class);
 
         disableHttpMethods(Book.class, config, theUnsupportedActions);
         disableHttpMethods(Review.class, config, theUnsupportedActions);
+        disableHttpMethods(History.class, config, theUnsupportedActions);
+        disableHttpMethods(Message.class, config, theUnsupportedActions);
 
 //        configure COGS Mapping - which request allowed to server-side
         cors.addMapping(config.getBasePath() + "/**").allowedOrigins(theAllowedOrigins).allowedHeaders("*");
