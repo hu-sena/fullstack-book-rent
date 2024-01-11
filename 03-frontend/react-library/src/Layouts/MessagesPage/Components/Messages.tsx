@@ -19,6 +19,30 @@ export const Messages = () => {
 
     useEffect(() => {
         const fetchUserMessages = async () => {
+            if (authState && authState.isAuthenticated) {
+                const userMessagesUrl = `http://localhost:8080/api/messages/search/findBooksByUserEmail/?userEmail=${authState.accessToken?.claims.sub}&page=${currentPage - 1}&size=${messagePerPage}`;
+
+                const requestOptions = {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${authState.accessToken?.accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                };
+
+                const responseMessages = await fetch(userMessagesUrl, requestOptions);
+
+                if (!responseMessages.ok) {
+                    throw new Error('Something went wrong!');
+                }
+
+                const responseJsonMessage = await responseMessages.json();
+                setMessages(responseJsonMessage._embedded.messages);
+
+                setTotalPages(responseJsonMessage.page.totalPages);
+
+            };
+            setIsLoadingMessages(false);
 
         }
         fetchUserMessages().catch((error: any) => {
