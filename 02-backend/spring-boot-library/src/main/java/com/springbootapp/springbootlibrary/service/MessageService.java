@@ -35,6 +35,7 @@ public class MessageService {
            throw new Exception("Message not found");
         }
 
+//        userEmail is from putMessage in MessageController
         message.get().setAdminEmail(userEmail);
         message.get().setResponse(adminQuestionRequest.getResponse());
         message.get().setClosed(true);
