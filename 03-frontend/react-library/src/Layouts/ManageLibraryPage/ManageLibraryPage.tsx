@@ -1,5 +1,6 @@
 import { useOktaAuth } from "@okta/okta-react"
 import { useState } from "react";
+import { Redirect } from "react-router-dom";
 
 export const ManageLibraryPage = () => {
 
@@ -21,6 +22,11 @@ export const ManageLibraryPage = () => {
     function messagesClickFunction() {
         setChangeQuantityOfBooksClick(false);
         setMessagesClick(true);
+    }
+
+    // only admin can access this page
+    if (authState?.accessToken?.claims.userType === undefined) {
+        return <Redirect to='/home'/>
     }
 
     return (
