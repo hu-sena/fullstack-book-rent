@@ -2,6 +2,7 @@ import { useOktaAuth } from "@okta/okta-react"
 import { useEffect, useState } from "react";
 import MessageModel from "../../../Models/MessageModels";
 import { SpinnerLoading } from "../../Utils/SpinnerLoading";
+import { Pagination } from "../../Utils/Pagination";
 
 export const AdminMessages = () => {
 
@@ -70,4 +71,20 @@ export const AdminMessages = () => {
     }
 
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+    return (
+        <div className='mt-3'>
+            {messages.length > 0 ?
+                <>
+                    <h5>Pending Q/A: </h5>
+                    {messages.map(message => (
+                        <p>Questions that need a response</p>
+                    ))}
+                </>
+                :
+                <h5>No pending Q/A</h5>
+            }
+            {totalPages > 1 && <Pagination currentPage={currentPage} totalPages={totalPages} paginate={paginate} />}
+        </div>
+    )
 }

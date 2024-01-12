@@ -1,6 +1,7 @@
 import { useOktaAuth } from "@okta/okta-react"
 import { useState } from "react";
 import { Redirect } from "react-router-dom";
+import { AdminMessages } from "./Components/AdminMessages";
 
 export const ManageLibraryPage = () => {
 
@@ -26,7 +27,7 @@ export const ManageLibraryPage = () => {
 
     // only admin can access this page
     if (authState?.accessToken?.claims.userType === undefined) {
-        return <Redirect to='/home'/>
+        return <Redirect to='/home' />
     }
 
     return (
@@ -63,7 +64,7 @@ export const ManageLibraryPage = () => {
                     </div>
                     <div className='tab-pane fade' id='nav-messages' role='tabpanel'
                         aria-labelledby='nav-messages-tab'>
-                        {messagesClick ? <>Admin Messages</> : <></>}
+                        {messagesClick ? <AdminMessages /> : <></>}
                     </div>
                 </div>
             </div>
