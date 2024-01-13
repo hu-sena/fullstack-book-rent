@@ -20,7 +20,7 @@ public class AdminService {
     private CheckoutRepository checkoutRepository;
 
     @Autowired
-    public AdminService (BookRepository bookRepository) {
+    public AdminService (BookRepository bookRepository, ReviewRepository reviewRepository, CheckoutRepository checkoutRepository) {
 
         this.bookRepository = bookRepository;
         this.reviewRepository = reviewRepository;
