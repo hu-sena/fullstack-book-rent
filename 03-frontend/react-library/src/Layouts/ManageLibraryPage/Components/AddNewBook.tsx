@@ -20,6 +20,30 @@ export const AddNewBook = () => {
         setCategory(value);
     }
 
+    function getBase64(file: any) {
+        // File API: able to convert files such as audio or image to text
+        let reader = new FileReader();
+
+        // Data URL: string encoded in B64 of the file + scheme identifier (eg."data:image/png;base64,")
+        reader.readAsDataURL(file);
+
+        reader.onload = function () {
+            setSelectedImage(reader.result);
+        }
+        reader.onerror = function (error) {
+            console.log('Error', error);
+        }
+
+    }
+
+    async function base64ConversionForImages(e: any) {
+        // console.log(e);
+        if (e.target.files[0]) {
+            getBase64(e.target.files[0])
+        }
+    }
+
+
     return (
         <div className='container mt-5 mb-5'>
             {displaySuccess &&
@@ -73,7 +97,8 @@ export const AddNewBook = () => {
                             <input type='number' className='form-control' name='copies' required
                                 onChange={e => setCopies(Number(e.target.value))} value={copies} />
                         </div>
-                        <input type='file' />
+                        {/* encode image to base64 */}
+                        <input type='file' onChange={e => base64ConversionForImages(e)} />
                         <div>
                             <button type='button' className='btn btn-primary mt-3'>
                                 Add Book
