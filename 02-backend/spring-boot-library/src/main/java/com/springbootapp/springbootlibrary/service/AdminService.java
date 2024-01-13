@@ -28,11 +28,27 @@ public class AdminService {
             throw new Exception("Book not found");
         }
 
-        book.get().setCopiesAvailable(book.get().getCopiesAvailable() +1);
+        book.get().setCopiesAvailable(book.get().getCopiesAvailable() + 1);
         book.get().setCopies(book.get().getCopies() + 1);
 
         bookRepository.save(book.get());
     }
+
+    public void decreaseBookQuantity(Long bookId) throws Exception {
+//        retrieve all books based on ID into book object
+        Optional<Book> book = bookRepository.findById(bookId);
+
+        if (!book.isPresent() || book.get().getCopiesAvailable() <= 0 || book.get().getCopies() <= 0) {
+            throw new Exception("Book not found");
+        }
+
+        book.get().setCopiesAvailable(book.get().getCopiesAvailable() - 1);
+        book.get().setCopies(book.get().getCopies() - 1);
+
+        bookRepository.save(book.get());
+    }
+
+
     public void postBook(AddBookRequest addBookRequest) {
         Book book = new Book();
         book.setTitle(addBookRequest.getTitle());
