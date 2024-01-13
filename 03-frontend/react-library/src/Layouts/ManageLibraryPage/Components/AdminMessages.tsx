@@ -28,7 +28,7 @@ export const AdminMessages = () => {
         const fetchUserMessages = async () => {
 
             if (authState && authState.isAuthenticated) {
-                const userMessagesUrl = `http://localhost:8080/api/messages/search/findByClosed/?closed=false&page=${currentPage - 1}&size=${messagesPerPage}`;
+                const userMessagesUrl = `${process.env.REACT_APP_API}/messages/search/findByClosed/?closed=false&page=${currentPage - 1}&size=${messagesPerPage}`;
 
                 const requestOptions = {
                     method: 'GET',
@@ -76,7 +76,7 @@ export const AdminMessages = () => {
     }
 
     async function submitResponseToQuestion(id: number, response: string) {
-        const submitResponseUrl = `http://localhost:8080/api/messages/secure/admin/message`;
+        const submitResponseUrl = `${process.env.REACT_APP_API}/messages/secure/admin/message`;
         if (authState && authState?.isAuthenticated && id !== null && response !== '') {
             const messageAdminRequestModel: AdminMessageRequest = new AdminMessageRequest(id, response);
 
