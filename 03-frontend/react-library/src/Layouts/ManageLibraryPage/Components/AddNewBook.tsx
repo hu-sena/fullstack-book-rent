@@ -1,5 +1,6 @@
 import { useOktaAuth } from "@okta/okta-react"
 import { useState } from "react";
+import AddBookRequest from "../../../Models/AddBookRequest";
 
 export const AddNewBook = () => {
     const { authState } = useOktaAuth();
@@ -40,6 +41,39 @@ export const AddNewBook = () => {
         // console.log(e);
         if (e.target.files[0]) {
             getBase64(e.target.files[0])
+        }
+    }
+
+    async function submitNewBook() {
+        const submitNewBookUrl = `http://localhost:8080/api/admin/secure/add/book`;
+        if (authState?.isAuthenticated && title !== '' && author !== '' && category !== 'Category'
+            && description !== '' && copies >= 0) {
+            const book: AddBookRequest = new AddBookRequest(title, author, description, copies, category);
+            book.img = selectedImage;
+            const requestOptions = {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${authState?.accessToken?.accessToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(book)
+            };
+
+            const submitNewBookResponse = await fetch(submitNewBookUrl, requestOptions);
+            if (!submitNewBookResponse.ok) {
+                throw new Error('Something went wrong!');
+            }
+            setTitle('');
+            setAuthor('');
+            setDescription('');
+            setCopies(0);
+            setCategory('Category');
+            setSelectedImage(null);
+            setDisplayWarning(false);
+            setDisplaySuccess(true);
+        } else {
+            setDisplayWarning(true);
+            setDisplaySuccess(false);
         }
     }
 
@@ -94,13 +128,13 @@ export const AddNewBook = () => {
                         </div>
                         <div className='col-md-3 mb-3'>
                             <label className='form-label'>Copies</label>
-                            <input type='number' className='form-control' name='copies' required
+                            <input className='form-control' type='number' name='copies' required
                                 onChange={e => setCopies(Number(e.target.value))} value={copies} />
                         </div>
                         {/* encode image to base64 */}
-                        <input type='file' onChange={e => base64ConversionForImages(e)} />
+                        <input onChange={e => base64ConversionForImages(e)} type='file' />
                         <div>
-                            <button type='button' className='btn btn-primary mt-3'>
+                            <button className='btn btn-primary mt-3' type='button' onClick={submitNewBook}>
                                 Add Book
                             </button>
                         </div>
