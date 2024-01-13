@@ -1,6 +1,8 @@
 package com.springbootapp.springbootlibrary.service;
 
 import com.springbootapp.springbootlibrary.dao.BookRepository;
+import com.springbootapp.springbootlibrary.dao.CheckoutRepository;
+import com.springbootapp.springbootlibrary.dao.ReviewRepository;
 import com.springbootapp.springbootlibrary.entity.Book;
 import com.springbootapp.springbootlibrary.requestmodels.AddBookRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +16,16 @@ import java.util.Optional;
 public class AdminService {
 
     private BookRepository bookRepository;
+    private ReviewRepository reviewRepository;
+    private CheckoutRepository checkoutRepository;
 
     @Autowired
     public AdminService (BookRepository bookRepository) {
+
         this.bookRepository = bookRepository;
+        this.reviewRepository = reviewRepository;
+        this.checkoutRepository = checkoutRepository;
+
     }
 
     public void increaseBookQuantity(Long bookId) throws Exception {
@@ -60,5 +68,18 @@ public class AdminService {
         book.setImg(addBookRequest.getImg());
 
         bookRepository.save(book);
+    }
+
+    public void deleteBook(Long bookId) throws Exception {
+        Optional<Book> book = bookRepository.findById(bookId);
+
+        if (!book.isPresent()) {
+            throw new Exception("Book not found");
+        }
+
+        bookRepository.delete(book.get());
+        checkoutRepository.deleteAllByBookId(bookId);
+        reviewRepository.deleteAllByBookId(bookId);
+
     }
 }
