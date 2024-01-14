@@ -3,9 +3,11 @@ package com.springbootapp.springbootlibrary.service;
 import com.springbootapp.springbootlibrary.dao.BookRepository;
 import com.springbootapp.springbootlibrary.dao.CheckoutRepository;
 import com.springbootapp.springbootlibrary.dao.HistoryRepository;
+import com.springbootapp.springbootlibrary.dao.PaymentRepository;
 import com.springbootapp.springbootlibrary.entity.Book;
 import com.springbootapp.springbootlibrary.entity.Checkout;
 import com.springbootapp.springbootlibrary.entity.History;
+import com.springbootapp.springbootlibrary.entity.Payment;
 import com.springbootapp.springbootlibrary.responsemodels.ShelfCurrentLoansResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,13 +27,15 @@ public class BookService {
     private BookRepository bookRepository;
     private CheckoutRepository checkoutRepository;
     private HistoryRepository historyRepository;
+    private PaymentRepository paymentRepository;
 
 //    dependency injection
     public BookService(BookRepository bookRepository, CheckoutRepository checkoutRepository,
-                       HistoryRepository historyRepository) {
+                       HistoryRepository historyRepository, PaymentRepository paymentRepository) {
         this.bookRepository = bookRepository;
         this.checkoutRepository = checkoutRepository;
         this.historyRepository = historyRepository;
+        this.paymentRepository = paymentRepository;
     }
 
     public Book checkoutBook(String userEmail, Long bookId) throws Exception {
@@ -43,7 +47,43 @@ public class BookService {
 
         if(!book.isPresent() || validateCheckout != null || book.get().getCopiesAvailable() <= 0) {
             throw new Exception("Book doesn't exist or already checkout by other user");
+        }
 
+//        not allow user to check out if there is outstanding fee
+//        if late: outstanding fee + book need to be returned first + pay outstanding fee
+        List<Checkout> currentBooksCheckedOut = checkoutRepository.findBooksByUserEmail(userEmail);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        boolean bookNeedsReturned = false;
+
+        for (Checkout checkout : currentBooksCheckedOut) {
+            Date returnDate = dateFormat.parse(checkout.getReturnDate());
+            Date currentDate = dateFormat.parse(LocalDate.now().toString());
+
+            TimeUnit time = TimeUnit.DAYS;
+
+            double differenceInTime = time.convert(returnDate.getTime() - currentDate.getTime(),
+                                                    TimeUnit.MILLISECONDS);
+
+            if (differenceInTime < 0) {
+                bookNeedsReturned = true;
+                break;
+            }
+
+        }
+
+//        validate if there is outstanding fee + books need to be returned first
+        Payment userPayment = paymentRepository.findByUserEmail(userEmail);
+        if ((userPayment != null && userPayment.getAmount() > 0) || (userPayment != null && bookNeedsReturned)) {
+            throw new Exception("Outstanding Fees");
+        }
+
+        if (userPayment == null) {
+            Payment payment = new Payment();
+            payment.setAmount(00.00);
+            payment.setUserEmail(userEmail);
+            paymentRepository.save(payment);
         }
 
         book.get().setCopiesAvailable(book.get().getCopiesAvailable() - 1);
