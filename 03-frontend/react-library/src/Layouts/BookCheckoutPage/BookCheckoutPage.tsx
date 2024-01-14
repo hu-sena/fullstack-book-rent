@@ -34,6 +34,9 @@ export const BookCheckoutPage = () => {
     const [isBookCheckedOut, setIsBookCheckedOut] = useState(false);
     const [isLoadingBookCheckedOut, setIsLoadingBookCheckedOut] = useState(true);
 
+    // Payment
+    const [displayErro, setDisplayError] = useState(false);
+
     const { bookId } = useParams<{ bookId: string }>();
 
     // array dependency =  
@@ -287,8 +290,10 @@ export const BookCheckoutPage = () => {
         const responseSubmitReview = await fetch(submitReviewUrl, requestOptions);
 
         if (!responseSubmitReview.ok) {
+            setDisplayError(true);
             throw new Error('Something went wrong!');
         }
+        setDisplayError(false);
         setIsReviewLeft(true);
 
     }
@@ -297,6 +302,9 @@ export const BookCheckoutPage = () => {
         <div>
             {/* Desktop */}
             <div className='container d-none d-lg-block'>
+                {displayErro && <div className="alert alert-danger mt-3" role="alert">
+                    Please pay outstading fees and/or return late books(s)
+                </div>}
                 <div className='row mt-5'>
                     <div className='col-sm-2 col-md-2'>
                         {book?.img ?
@@ -323,6 +331,9 @@ export const BookCheckoutPage = () => {
 
             {/* Mobile */}
             <div className='container d-lg-none mt-5'>
+                {displayErro && <div className="alert alert-danger mt-3" role="alert">
+                    Please pay outstading fees and/or return late books(s)
+                </div>}
                 <div className='d-flex justify-content-center align-items-center'>
                     {book?.img ?
                         <img src={book?.img} width='226' height='349' alt='Book' />
