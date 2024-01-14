@@ -1,12 +1,15 @@
 package com.springbootapp.springbootlibrary.service;
 
 import com.springbootapp.springbootlibrary.dao.PaymentRepository;
+import com.springbootapp.springbootlibrary.entity.Payment;
 import com.springbootapp.springbootlibrary.requestmodels.PaymentInfoRequest;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +42,20 @@ public class PaymentService {
         return PaymentIntent.create(params);
     }
 
+//    ResponseEntity: custom HTTP response
+    public ResponseEntity<String> stripePayment(String userEmail) throws Exception {
+        Payment payment = paymentRepository.findByUserEmail(userEmail);
 
+        if (payment == null) {
+            throw new Exception("Payment information is missing");
+        }
+
+        payment.setAmount(00.00);
+        paymentRepository.save(payment);
+
+//        when payment is successfully saved
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 
 }
