@@ -171,6 +171,24 @@ public class BookService {
         book.get().setCopiesAvailable(book.get().getCopiesAvailable() + 1);
 
         bookRepository.save(book.get());
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        Date returnDate = dateFormat.parse(vaildateCheckout.getReturnDate());
+        Date currentDate = dateFormat.parse(LocalDate.now().toString());
+
+        TimeUnit time = TimeUnit.DAYS;
+        double differenceInTime = time.convert(returnDate.getTime() - currentDate.getTime(),
+                TimeUnit.MILLISECONDS);
+
+//        impose payment if late
+        if (differenceInTime < 0) {
+            Payment payment = paymentRepository.findByUserEmail(userEmail);
+//            (differenceInTime * - 1): since differenceInTime is negative, (-1) to make it positive
+            payment.setAmount(payment.getAmount() + (differenceInTime * - 1));
+            paymentRepository.save(payment);
+        }
+
         checkoutRepository.deleteById(vaildateCheckout.getId());
 
         History history = new History(
