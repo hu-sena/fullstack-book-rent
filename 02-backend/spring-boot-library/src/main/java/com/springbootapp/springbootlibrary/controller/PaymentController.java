@@ -5,6 +5,7 @@ import com.springbootapp.springbootlibrary.service.PaymentService;
 import com.springbootapp.springbootlibrary.util.ExtractJWT;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ public class PaymentController {
 
     private PaymentService paymentService;
 
+    @Autowired
     public PaymentController(PaymentService paymentService) {
         this.paymentService = paymentService;
     }
