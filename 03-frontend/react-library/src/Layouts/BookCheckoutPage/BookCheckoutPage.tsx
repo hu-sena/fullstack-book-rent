@@ -35,7 +35,7 @@ export const BookCheckoutPage = () => {
     const [isLoadingBookCheckedOut, setIsLoadingBookCheckedOut] = useState(true);
 
     // Payment
-    const [displayErro, setDisplayError] = useState(false);
+    const [displayError, setDisplayError] = useState(false);
 
     const { bookId } = useParams<{ bookId: string }>();
 
@@ -156,7 +156,7 @@ export const BookCheckoutPage = () => {
             setIsLoadingUserReview(false);
             setHttpError(error.message);
         })
-    }, [authState])
+    }, [authState]);
 
     // Loan Count useEffect
     useEffect(() => {
@@ -192,7 +192,7 @@ export const BookCheckoutPage = () => {
         })
 
         // dependency array - the useEffect runs whenever the authState changes
-    }, [authState, isBookCheckedOut])
+    }, [authState, isBookCheckedOut]);
 
     // Book Checked Out? useEffect
     useEffect(() => {
@@ -258,9 +258,10 @@ export const BookCheckoutPage = () => {
         const responseCheckoutBook = await fetch(checkoutBookUrl, requestOptions);
 
         if (!responseCheckoutBook.ok) {
+            setDisplayError(true);
             throw new Error('Something went wrong!');
         }
-
+        setDisplayError(false);
         setIsBookCheckedOut(true);
 
     }
@@ -290,10 +291,10 @@ export const BookCheckoutPage = () => {
         const responseSubmitReview = await fetch(submitReviewUrl, requestOptions);
 
         if (!responseSubmitReview.ok) {
-            setDisplayError(true);
+            
             throw new Error('Something went wrong!');
         }
-        setDisplayError(false);
+        
         setIsReviewLeft(true);
 
     }
@@ -302,7 +303,7 @@ export const BookCheckoutPage = () => {
         <div>
             {/* Desktop */}
             <div className='container d-none d-lg-block'>
-                {displayErro && <div className="alert alert-danger mt-3" role="alert">
+                {displayError && <div className="alert alert-danger mt-3" role="alert">
                     Please pay outstading fees and/or return late books(s)
                 </div>}
                 <div className='row mt-5'>
@@ -331,7 +332,7 @@ export const BookCheckoutPage = () => {
 
             {/* Mobile */}
             <div className='container d-lg-none mt-5'>
-                {displayErro && <div className="alert alert-danger mt-3" role="alert">
+                {displayError && <div className="alert alert-danger mt-3" role="alert">
                     Please pay outstading fees and/or return late books(s)
                 </div>}
                 <div className='d-flex justify-content-center align-items-center'>
