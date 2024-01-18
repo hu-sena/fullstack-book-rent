@@ -22,7 +22,7 @@ export const PaymentPage = () => {
                 const requestOptions = {
                     method: 'GET',
                     headers: {
-                        Authorization: `Bearer ${authState.accessToken?.accessToken}`,
+                        // Authorization: `Bearer ${authState.accessToken?.accessToken}`,
                         'Content-Type': 'application/json'
                     }
                 };
@@ -33,8 +33,9 @@ export const PaymentPage = () => {
                 }
                 const responseJsonPayment = await responsePayment.json();
                 setFees(responseJsonPayment.amount);
-            };
+            
             setIsLoadingFees(false);
+            }
         }
         fetchFees().catch((error: any) => {
             setIsLoadingFees(false);
@@ -84,7 +85,7 @@ export const PaymentPage = () => {
                 }
             }
         }, { handleActions: false }
-        // and stripe handle the payment confirmation
+            // and stripe handle the payment confirmation
         ).then(async function (result: any) {
             if (result.error) {
                 setSubmitDisabled(false)
@@ -136,7 +137,7 @@ export const PaymentPage = () => {
                     <h5 className='card-title mb-3'>Credit Card</h5>
                     <CardElement id='card-element' />
                     <button disabled={submitDisabled} type='button' className='btn btn-md main-color text-white mt-3'
-                    >
+                        onClick={checkout}>
                         Pay fees
                     </button>
                 </div>
