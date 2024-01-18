@@ -102,9 +102,9 @@ public class BookService {
     }
 
     public Boolean checkoutBookByUser(String userEmail, Long bookId) {
-        Checkout vaildateCheckout = checkoutRepository.findByUserEmailAndBookId(userEmail, bookId);
+        Checkout validateCheckout = checkoutRepository.findByUserEmailAndBookId(userEmail, bookId);
 
-        if (vaildateCheckout != null) {
+        if (validateCheckout != null) {
             return true;
         } else {
             return false;
@@ -162,8 +162,8 @@ public class BookService {
 
         Optional<Book> book = bookRepository.findById(bookId);
 
-        Checkout vaildateCheckout = checkoutRepository.findByUserEmailAndBookId(userEmail, bookId);
-        if(!book.isPresent() || vaildateCheckout == null) {
+        Checkout validateCheckout = checkoutRepository.findByUserEmailAndBookId(userEmail, bookId);
+        if(!book.isPresent() || validateCheckout == null) {
             throw new Exception("Book does not exist or not checked out by user");
         }
 
@@ -174,7 +174,7 @@ public class BookService {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-        Date returnDate = dateFormat.parse(vaildateCheckout.getReturnDate());
+        Date returnDate = dateFormat.parse(validateCheckout.getReturnDate());
         Date currentDate = dateFormat.parse(LocalDate.now().toString());
 
         TimeUnit time = TimeUnit.DAYS;
@@ -189,11 +189,11 @@ public class BookService {
             paymentRepository.save(payment);
         }
 
-        checkoutRepository.deleteById(vaildateCheckout.getId());
+        checkoutRepository.deleteById(validateCheckout.getId());
 
         History history = new History(
                 userEmail,
-                vaildateCheckout.getCheckoutDate(),
+                validateCheckout.getCheckoutDate(),
 //                returned date
                 LocalDate.now().toString(),
                 book.get().getTitle(),
@@ -208,20 +208,20 @@ public class BookService {
 
     public void renewLoan (String userEmail, Long bookId) throws Exception {
 
-        Checkout vaildateCheckout = checkoutRepository.findByUserEmailAndBookId(userEmail, bookId);
-        if(vaildateCheckout == null) {
+        Checkout validateCheckout = checkoutRepository.findByUserEmailAndBookId(userEmail, bookId);
+        if(validateCheckout == null) {
             throw new Exception("Book does not exist or not checked out by user");
         }
 
 //        allow only if it is not past the loan period
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-        Date returnDate = dateFormat.parse(vaildateCheckout.getReturnDate());
+        Date returnDate = dateFormat.parse(validateCheckout.getReturnDate());
         Date currentDate = dateFormat.parse(LocalDate.now().toString());
 
         if (returnDate.compareTo(currentDate) > 0 || returnDate.compareTo(currentDate) == 0) {
-            vaildateCheckout.setReturnDate(LocalDate.now().plusDays(7).toString());
-            checkoutRepository.save(vaildateCheckout);
+            validateCheckout.setReturnDate(LocalDate.now().plusDays(7).toString());
+            checkoutRepository.save(validateCheckout);
         }
     }
 }
